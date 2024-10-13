@@ -14,6 +14,19 @@ spec:
       labels:
         app: {{ include "adguard-home.name" . }}
     spec:
+      initContainers:
+        - name: configure-dhcp
+          image: mikefarah/yq
+          command: ['sh', '/config/adjust-dhcp-option.sh']
+          env:
+            - name: LOADBALANCER_IP
+              value: "{{ .Values.adguardhome.service.loadBalancerIP }}"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: script-volume
+              mountPath: /config/adjust-dhcp-option.sh
+              subPath: adjust-dhcp-option.sh
       containers:
         - name: adguardhome
           image: "{{ .Values.adguardhome.image.repository }}:{{ .Values.adguardhome.image.tag }}"
@@ -32,14 +45,17 @@ spec:
               containerPort: {{ .Values.adguardhome.ports.dhcp.target }}
               protocol: UDP
           volumeMounts:
-            - name: data
-              mountPath: /opt/adguardhome/work
             - name: config
               mountPath: /opt/adguardhome/conf
+            - name: data
+              mountPath: /opt/adguardhome/work
       volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: {{ include "adguard-home.fullname" . }}-data
         - name: config
           persistentVolumeClaim:
             claimName: {{ include "adguard-home.fullname" . }}-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "adguard-home.fullname" . }}-data
+        - name: script-volume
+          configMap:
+            name: dhcp-config-script

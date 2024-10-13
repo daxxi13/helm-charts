@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dhcp-config-script
+data:
+  adjust-dhcp-option.sh: |
+    #!/bin/sh
+    CONFIG_FILE=/config/AdGuardHome.yaml
+    LOADBALANCER_IP=${LOADBALANCER_IP}
+    
+    if yq eval '.dhcpv4.options[] | select(. == "6 ip '"${LOADBALANCER_IP}"'")' $CONFIG_FILE > /dev/null; then
+      echo "DHCP option 6 already set to correct IP address."
+    else
+      echo "Updating DHCP option 6 to use IP ${LOADBALANCER_IP}"
+      yq eval --inplace '.dhcpv4.options |= map(if . == "6 ip .*" then "6 ip '"${LOADBALANCER_IP}"'" else . end)' $CONFIG_FILE
+    fi
+    
+    if ! yq eval '.dhcpv4.options[] | select(. == "6 ip .*")' $CONFIG_FILE > /dev/null; then
+      echo "Adding DHCP option 6 to the configuration."
+      yq eval --inplace '.dhcpv4.options += "6 ip '"${LOADBALANCER_IP}"'"' $CONFIG_FILE
+    fi
