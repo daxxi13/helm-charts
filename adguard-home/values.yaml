@@ -1,0 +1,55 @@
+replicaCount: 1
+
+adguardhome:
+  image:
+    repository: adguard/adguardhome
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    loadBalancerIP: 192.168.1.250
+  ports:
+    dns:
+      target: 53
+    http:
+      target: 80
+    setup:
+      target: 3000
+    dhcp:
+      target: 67
+
+ingress:
+  enabled: true
+  host: adguard.mous.ovh
+  annotations: 
+    cert-manager.io/cluster-issuer: le-prod
+  tls: 
+    - hosts:
+      - adguard.mous.ovh
+      secretName: adg
+
+persistence:
+  config:
+    enabled: true
+    size: 50Mi
+    accessModes:
+      - ReadWriteOnce
+  data:
+    enabled: true
+    size: 100Mi
+    accessModes:
+      - ReadWriteOnce
+
+resources: {}
+
+dhcpRelay:
+  enabled: true  # Activer le relais DHCP
+  singleInstance: true  # Mettre à true pour spécifier un seul relais par réseau
+  image:
+    repository: modem7/dhcprelay
+    tag: latest
+    pullPolicy: IfNotPresent
+  server: 192.168.1.250
+  interface: ""  # Optionnel : définir uniquement si tous les noeuds ont le même nom pour cette interface.
+  # Remarque : Le nom de l'interface réseau doit être défini seulement si tous les nœuds du cluster utilisent le même
+  # nom pour cette interface. Cela n'est pas toujours le cas, surtout dans des environnements hétérogènes.

@@ -1,0 +1,62 @@
+{{- if .Values.dhcpRelay.enabled }}
+{{- if .Values.dhcpRelay.singleInstance }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "adguard-home.fullname" . }}-dhcp-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "adguard-home.name" . }}-dhcp-relay
+  template:
+    metadata:
+      labels:
+        app: {{ include "adguard-home.name" . }}-dhcp-relay
+    spec:
+      hostNetwork: true
+      containers:
+      - name: dhcp-relay
+        image: "{{ .Values.dhcpRelay.image.repository }}:{{ .Values.dhcpRelay.image.tag }}"
+        imagePullPolicy: {{ .Values.dhcpRelay.image.pullPolicy }}
+        securityContext:
+          privileged: true
+        command:
+          - "dhcrelay"
+          - "-d"
+          {{- if .Values.dhcpRelay.interface }}
+          - "-i"
+          - "{{ .Values.dhcpRelay.interface }}"
+          {{- end }}
+          - "{{ .Values.dhcpRelay.server }}"
+{{- else }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "adguard-home.fullname" . }}-dhcp-relay
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "adguard-home.name" . }}-dhcp-relay
+  template:
+    metadata:
+      labels:
+        app: {{ include "adguard-home.name" . }}-dhcp-relay
+    spec:
+      hostNetwork: true
+      containers:
+      - name: dhcp-relay
+        image: "{{ .Values.dhcpRelay.image.repository }}:{{ .Values.dhcpRelay.image.tag }}"
+        imagePullPolicy: {{ .Values.dhcpRelay.image.pullPolicy }}
+        securityContext:
+          privileged: true
+        command:
+          - "dhcrelay"
+          - "-d"
+          {{- if .Values.dhcpRelay.interface }}
+          - "-i"
+          - "{{ .Values.dhcpRelay.interface }}"
+          {{- end }}
+          - "{{ .Values.dhcpRelay.server }}"
+{{- end }}
+{{- end }}
