@@ -1,4 +1,4 @@
-```markdown
+
 # AdGuard Home Helm Chart
 
 This Helm chart is used to deploy [AdGuard Home](https://adguard.com/en/adguard-home/overview.html) on a Kubernetes cluster, with optional DHCP relay functionality and automatic configuration via an init container.
