@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  adguard-home:
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2024-10-25T18:58:02.15029229Z"
+    description: A Helm chart for deploying AdGuard Home with optional DHCP relay.
+    digest: 8a26f53662dad4502fe2e3bc35aedecb97bfe4019b12215bafd60323bf20af4b
+    name: adguard-home
+    urls:
+    - https://github.com/mecmus/helm-charts/releases/download/adguard-home-0.1.0/adguard-home-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-10-25T18:58:02.150298181Z"
