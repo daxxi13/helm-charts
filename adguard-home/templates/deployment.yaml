@@ -18,6 +18,8 @@ spec:
         - name: configure-dhcp
           image: mikefarah/yq
           command: ['sh', '/config/adjust-dhcp-option.sh']
+          securityContext:
+            runAsUser: 0  # Ensure the init container runs as root            
           env:
             - name: LOADBALANCER_IP
               value: "{{ .Values.adguardhome.service.loadBalancerIP }}"
