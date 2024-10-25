@@ -1,0 +1,5 @@
+apiVersion: v2
+name: threadfin
+description: A Helm chart for deploying Threadfin, a M3U proxy server.
+version: 0.1.0
+appVersion: "1.0"

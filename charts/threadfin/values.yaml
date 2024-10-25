@@ -1,0 +1,35 @@
+replicaCount: 1
+
+image:
+  repository: fyb3roptik/threadfin
+  pullPolicy: IfNotPresent
+  tag: latest 
+
+service:
+  type: LoadBalancer # Can be changed to ClusterIP if a LoadBalancer is not desired
+  port: 34400
+  loadBalancerIP: "" # Specify the desired static IP for MetalLB to use
+
+env:
+  PUID: 1001
+  PGID: 1001
+  TZ: Europe/Paris
+  THREADFIN_BRANCH: main # Change to `beta` for the beta branch
+  THREADFIN_DEBUG: 0 # Debug level: 0=OFF, 1=Error, 2=Warning, 3=Info
+  THREADFIN_PORT: 34400 # Threadfin port
+
+persistence:
+  conf:
+    enabled: true
+    path: /home/threadfin/conf
+    existingClaim: "" # Specify an existing claim if available
+    size: 20Mi # Default size for the PVC
+    storageClass: "" # Specify a storage class if needed
+  temp:
+    enabled: true
+    path: /tmp/threadfin
+    existingClaim: "" # Specify an existing claim if available
+    size: 500Mi # Default size for the PVC
+    storageClass: "" # Specify a storage class if needed
+
+resources: {}

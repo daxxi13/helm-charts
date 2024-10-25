@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "threadfin.fullname" . }}
+  labels:
+    {{- include "threadfin.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "threadfin.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "threadfin.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.env.THREADFIN_PORT }}
+          env:
+            - name: PUID
+              value: "{{ .Values.env.PUID }}"
+            - name: PGID
+              value: "{{ .Values.env.PGID }}"
+            - name: TZ
+              value: "{{ .Values.env.TZ }}"
+            - name: THREADFIN_BRANCH
+              value: "{{ .Values.env.THREADFIN_BRANCH }}"
+            - name: THREADFIN_DEBUG
+              value: "{{ .Values.env.THREADFIN_DEBUG }}"
+            - name: THREADFIN_PORT
+              value: "{{ .Values.env.THREADFIN_PORT }}"
+          volumeMounts:
+            - mountPath: "{{ .Values.persistence.conf.path }}"
+              name: conf
+            - mountPath: "{{ .Values.persistence.temp.path }}"
+              name: temp
+      volumes:
+        - name: conf
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.conf.existingClaim | default (printf "%s-conf" (include "threadfin.fullname" .)) }}
+        - name: temp
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.temp.existingClaim | default (printf "%s-temp" (include "threadfin.fullname" .)) }}

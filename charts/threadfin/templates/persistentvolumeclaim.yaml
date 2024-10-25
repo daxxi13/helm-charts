@@ -1,0 +1,36 @@
+{{- if and .Values.persistence.conf.enabled (eq .Values.persistence.conf.existingClaim "") }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "threadfin.fullname" . }}-conf
+  labels:
+    {{- include "threadfin.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.conf.size }}
+  {{- if .Values.persistence.conf.storageClass }}
+  storageClassName: {{ .Values.persistence.conf.storageClass }}
+  {{- end }}
+---
+{{- end }}
+
+{{- if and .Values.persistence.temp.enabled (eq .Values.persistence.temp.existingClaim "") }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "threadfin.fullname" . }}-temp
+  labels:
+    {{- include "threadfin.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.temp.size }}
+  {{- if .Values.persistence.temp.storageClass }}
+  storageClassName: {{ .Values.persistence.temp.storageClass }}
+  {{- end }}
+{{- end }}
