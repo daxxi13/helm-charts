@@ -10,4 +10,14 @@ entries:
     urls:
     - https://github.com/mecmus/helm-charts/releases/download/adguard-home-0.1.0/adguard-home-0.1.0.tgz
     version: 0.1.0
-generated: "2024-10-25T18:58:02.150298181Z"
+  threadfin:
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2024-10-25T21:36:21.588451136Z"
+    description: A Helm chart for deploying Threadfin, a M3U proxy server.
+    digest: 1eedc5ebb36ba8ac4999904ddaa408dbd13a23b4b99be486b253cf91f69b34dd
+    name: threadfin
+    urls:
+    - https://github.com/daxxi13/helm-charts/releases/download/threadfin-0.1.0/threadfin-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-10-25T21:36:21.588461616Z"
